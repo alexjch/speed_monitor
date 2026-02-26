@@ -1,0 +1,14 @@
+{
+  "calibration": {
+    "fps": 30.0,
+    "meters_per_pixel_near": 0.05,
+    "meters_per_pixel_far": 0.02,
+    "y_near": 700,
+    "y_far": 100
+  },
+  "min_contour_area_px": 800,
+  "max_track_age_frames": 10,
+  "match_max_distance_px": 80.0,
+  "speed_smoothing_window": 2,
+  "speed_limit_kmh": 50.0
+}

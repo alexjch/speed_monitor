@@ -1,42 +1,71 @@
-# My Python Project
+# Speed Monitor
 
-## Overview
-This project is a Python application that serves as an example of a well-structured Python project. It includes an entry point, type definitions, and unit tests to ensure code quality.
+Baseline implementation of the system described in [ssd.md](ssd.md): detect moving vehicles from a fixed camera feed, track them across frames, estimate speed from pixel displacement + calibration, and log results.
 
-## Project Structure
-```
-my-python-project
-├── src
-│   ├── main.py          # Entry point of the application
-│   └── types
-│       └── __init__.py  # Type definitions and data structures
-├── tests
-│   └── test_main.py     # Unit tests for the application
-├── requirements.txt      # Project dependencies
-├── pyproject.toml        # Project configuration
-└── README.md             # Project documentation
-```
+## Install
 
-## Installation
-To install the required dependencies, run the following command:
+This repo expects a local virtualenv at `.venv`.
 
 ```
-pip install -r requirements.txt
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -r requirements.txt
 ```
 
-## Usage
-To run the application, execute the following command:
+## Run
+
+Camera (index 0) to CSV:
 
 ```
-python src/main.py
+python src/main.py --output speeds.csv
 ```
+
+Video file, with display overlay:
+
+```
+python src/main.py --video path/to/video.mp4 --display --output speeds.csv
+```
+
+With config + speed limit alerts:
+
+```
+python src/main.py --config config.example.json --speed-limit-kmh 50 --display
+```
+
+Press `q` to quit when `--display` is enabled.
+
+## Configuration
+
+Configuration is JSON. See [config.example.json](config.example.json).
+
+```json
+{
+    "calibration": {
+        "fps": 30.0,  // Frames per second of the video feed
+        "meters_per_pixel_near": 0.05,  // Scale factor for objects near the camera
+        "meters_per_pixel_far": 0.02,  // Scale factor for objects far from the camera
+        "y_near": 700,  // Y-coordinate threshold for near zone
+        "y_far": 100  // Y-coordinate threshold for far zone
+    },
+    "min_contour_area_px": 800,  // Minimum object size in pixels to detect
+    "max_track_age_frames": 10,  // Maximum frames to keep a track without detections
+    "match_max_distance_px": 80.0,  // Maximum pixel distance to match detections to tracks
+    "speed_smoothing_window": 2,  // Number of frames to average for speed estimation
+    "speed_limit_kmh": 50.0  // Speed limit threshold for alerts
+}
+```
+
+
+## Output
+
+CSV rows contain timestamp, frame index, track id, bounding box, and estimated speed (km/h).
 
 ## Testing
-To run the tests, use the following command:
 
 ```
-pytest tests/test_main.py
+python -m pytest -q
 ```
 
-## Contributing
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
+## Notes / limitations
+
+The baseline detector uses OpenCV background subtraction, so it will detect any motion (not strictly “vehicles”). For real deployments you’ll likely swap in a dedicated object detector + a stronger tracker, and calibrate with ground truth.

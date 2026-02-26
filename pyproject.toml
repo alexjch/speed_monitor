@@ -1,13 +1,15 @@
 [tool.poetry]
-name = "my-python-project"
+name = "speed-monitor"
 version = "0.1.0"
-description = "A brief description of my Python project."
-authors = ["Your Name <youremail@example.com>"]
+description = "Baseline computer-vision speed monitoring pipeline (see ssd.md)."
+authors = ["Alex JCH <alexjch@example.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.8"
-# Add your project dependencies here
+python = ">=3.10,<4"
+
+numpy = "*"
+opencv-python = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
