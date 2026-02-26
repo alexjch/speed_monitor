@@ -28,9 +28,9 @@ class BackgroundSubtractorDetector:
         self,
         *,
         min_contour_area_px: int = 800,
-        history: int = 400,
+        history: int = 100,
         var_threshold: float = 32.0,
-        detect_shadows: bool = True,
+        detect_shadows: bool = False,
     ) -> None:
         self._min_contour_area_px = int(min_contour_area_px)
         self._bg = cv2.createBackgroundSubtractorMOG2(
@@ -39,7 +39,7 @@ class BackgroundSubtractorDetector:
             detectShadows=bool(detect_shadows),
         )
 
-        self._kernel_open = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+        self._kernel_open = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
         self._kernel_close = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))
 
     def detect(self, frame_bgr: np.ndarray) -> DetectorResult:

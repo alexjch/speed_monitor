@@ -6,7 +6,7 @@
     "y_near": 700,
     "y_far": 100
   },
-  "min_contour_area_px": 800,
+  "min_contour_area_px": 2000,
   "max_track_age_frames": 10,
   "match_max_distance_px": 80.0,
   "speed_smoothing_window": 2,
