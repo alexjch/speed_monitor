@@ -34,6 +34,27 @@ python src/main.py --config config.example.json --speed-limit-kmh 50 --display
 
 Press `q` to quit when `--display` is enabled.
 
+## Offline downsampling helper
+
+Use the helper to downsample a video file before running the monitor.
+
+Basic usage:
+
+```
+python3 helpers/downsample.py input.mp4 --output downsampled.mp4 --scale 0.25
+```
+
+With explicit codec and fps:
+
+```
+python3 helpers/downsample.py input.mp4 --output downsampled.mp4 --scale 0.25 --codec avc1 --fps 30
+```
+
+Notes:
+- `input` is positional and must come before options.
+- `--scale` is a float in `(0, 1]`.
+- If `--fps` is omitted (or `0`), input FPS is reused (fallback: `30.0`).
+
 ## Configuration
 
 Configuration is JSON. See [config.example.json](config.example.json).
