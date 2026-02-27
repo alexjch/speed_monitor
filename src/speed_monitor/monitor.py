@@ -69,7 +69,7 @@ class SpeedMonitor:
         with CsvSpeedLogger(output_csv) as logger:
             while True:
                 ok, frame = cap.read()
-                if not ok or frame is None:
+                if not ok:
                     break
 
                 frame_idx += 1

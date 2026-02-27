@@ -59,6 +59,8 @@ Notes:
 
 Configuration is JSON. See [config.example.json](config.example.json).
 
+For how to measure calibration values in a real scene, see [calibration.md](calibration.md).
+
 ```json
 {
     "calibration": {
@@ -84,9 +86,15 @@ CSV rows contain timestamp, frame index, track id, bounding box, and estimated s
 ## Testing
 
 ```
-python -m pytest -q
+make test
+
+# or, without make:
+.venv/bin/python -m pytest -q
 ```
 
 ## Notes / limitations
 
 The baseline detector uses OpenCV background subtraction, so it will detect any motion (not strictly “vehicles”). For real deployments you’ll likely swap in a dedicated object detector + a stronger tracker, and calibrate with ground truth.
+
+## TODO
+- Use proper configuration and calibration

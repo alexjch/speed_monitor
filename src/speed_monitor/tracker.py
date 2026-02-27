@@ -13,6 +13,21 @@ def _euclidean(a: tuple[float, float], b: tuple[float, float]) -> float:
 
 @dataclass
 class Track:
+    """
+    A class that represents a tracked object across multiple frames.
+
+    Attributes:
+        track_id (int): Unique identifier for this track.
+        bbox (BBox): Current bounding box of the tracked object.
+        last_seen_frame (int): Frame index where the object was last detected.
+        history (list[tuple[int, float, float]]): List of (frame_idx, center_x, center_y) tuples
+            representing the object's position history across frames.
+
+    Methods:
+        update: Updates the track with a new bounding box and frame index.
+        cx: Property that returns the current center x-coordinate of the bounding box.
+        cy: Property that returns the current center y-coordinate of the bounding box.
+    """
     track_id: int
     bbox: BBox
     last_seen_frame: int
@@ -33,7 +48,21 @@ class Track:
 
 
 class CentroidTracker:
-    """Simple multi-object tracker based on centroid distance matching."""
+    """
+    A centroid-based tracker for matching detections across frames.
+
+    Uses centroid distance to greedily match detections to existing tracks.
+    Tracks that are not updated for a configurable number of frames are removed.
+
+    Attributes:
+        _max_age_frames: Maximum number of frames a track can exist without updates.
+        _match_max_distance_px: Maximum centroid distance in pixels for a valid match.
+        _next_id: Counter for generating unique track IDs.
+        _tracks: Dictionary mapping track IDs to Track objects.
+
+    Methods:
+        update: Updates tracks with new detections and returns all active tracks.
+    """
 
     def __init__(
         self,
