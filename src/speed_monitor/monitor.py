@@ -9,21 +9,24 @@ import numpy as np
 from .config import MonitorConfig
 from .detector import BackgroundSubtractorDetector
 from .logger import CsvSpeedLogger, SpeedLogRow
-from .speed import speed_kmh_from_pixel_displacement
+from .speed import speed_mph_from_pixel_displacement
 from .tracker import CentroidTracker, Track
 
 
 @dataclass(frozen=True)
 class SpeedAlert:
+    """Speed alert metadata for a single tracked object."""
     timestamp_iso: str
     frame_idx: int
     track_id: int
-    speed_kmh: float
-    speed_limit_kmh: float
+    speed_mph: float
+    speed_limit_mph: float
 
 
 class SpeedMonitor:
+    """Coordinate detection, tracking, speed estimation, and logging."""
     def __init__(self, *, config: MonitorConfig) -> None:
+        """Initialize the speed monitor with a runtime configuration."""
         self._config = config
 
         self._detector = BackgroundSubtractorDetector(
@@ -34,7 +37,8 @@ class SpeedMonitor:
             match_max_distance_px=config.match_max_distance_px,
         )
 
-    def _estimate_track_speed_kmh(self, tr: Track) -> float | None:
+    def _estimate_track_speed_mph(self, tr: Track) -> float | None:
+        """Estimate track speed in mph using recent track history."""
         window = max(2, int(self._config.speed_smoothing_window))
         if len(tr.history) < window:
             return None
@@ -46,7 +50,7 @@ class SpeedMonitor:
             return None
 
         pixel_distance = float(((x1 - x0) ** 2 + (y1 - y0) ** 2) ** 0.5)
-        return speed_kmh_from_pixel_displacement(
+        return speed_mph_from_pixel_displacement(
             pixel_distance=pixel_distance,
             frames_delta=frames_delta,
             calibration=self._config.calibration,
@@ -61,6 +65,7 @@ class SpeedMonitor:
         display: bool = False,
         max_frames: int | None = None,
     ) -> None:
+        """Run the monitor against a live camera or video file."""
         cap = cv2.VideoCapture(video_source)
         if not cap.isOpened():
             raise RuntimeError(f"Could not open video source: {video_source}")
@@ -82,8 +87,8 @@ class SpeedMonitor:
                 timestamp_iso = dt.datetime.now(dt.timezone.utc).isoformat()
 
                 for tr in tracks:
-                    speed_kmh = self._estimate_track_speed_kmh(tr)
-                    if speed_kmh is None:
+                    speed_mph = self._estimate_track_speed_mph(tr)
+                    if speed_mph is None:
                         continue
 
                     logger.log(
@@ -95,14 +100,14 @@ class SpeedMonitor:
                             y1=tr.bbox.y1,
                             x2=tr.bbox.x2,
                             y2=tr.bbox.y2,
-                            speed_kmh=float(speed_kmh),
+                            speed_mph=float(speed_mph),
                         )
                     )
 
-                    if self._config.speed_limit_kmh is not None and speed_kmh > self._config.speed_limit_kmh:
+                    if self._config.speed_limit_mph is not None and speed_mph > self._config.speed_limit_mph:
                         print(
-                            f"ALERT track={tr.track_id} speed={speed_kmh:.1f}km/h "
-                            f"limit={self._config.speed_limit_kmh:.1f}km/h frame={frame_idx}"
+                            f"ALERT track={tr.track_id} speed={speed_mph:.1f}mph "
+                            f"limit={self._config.speed_limit_mph:.1f}mph frame={frame_idx}"
                         )
 
                 if display:
@@ -124,13 +129,14 @@ class SpeedMonitor:
             cv2.destroyAllWindows()
 
     def _draw_overlay(self, frame: np.ndarray, tracks: list[Track]) -> None:
+        """Draw bounding boxes and speed labels onto a frame."""
         for tr in tracks:
             x1, y1, x2, y2 = tr.bbox.x1, tr.bbox.y1, tr.bbox.x2, tr.bbox.y2
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            speed_kmh = self._estimate_track_speed_kmh(tr)
+            speed_mph = self._estimate_track_speed_mph(tr)
             label = f"id={tr.track_id}"
-            if speed_kmh is not None:
-                label += f" {speed_kmh:.1f} km/h"
+            if speed_mph is not None:
+                label += f" {speed_mph:.1f} mph"
 
             cv2.putText(
                 frame,

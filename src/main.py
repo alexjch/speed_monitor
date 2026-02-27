@@ -8,6 +8,7 @@ from speed_monitor.monitor import SpeedMonitor
 
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
+    """Parse CLI arguments for the speed monitor."""
     parser = argparse.ArgumentParser(description="Speed Monitor (baseline)")
     parser.add_argument(
         "--video",
@@ -36,15 +37,16 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help="Stop after N frames (useful for quick tests)",
     )
     parser.add_argument(
-        "--speed-limit-kmh",
+        "--speed-limit-mph",
         type=float,
         default=None,
-        help="Optional alert threshold in km/h.",
+        help="Optional alert threshold in mph.",
     )
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Run the speed monitor CLI."""
     args = _parse_args(argv)
 
     config: MonitorConfig
@@ -53,14 +55,14 @@ def main(argv: list[str] | None = None) -> int:
     else:
         config = MonitorConfig()
 
-    if args.speed_limit_kmh is not None:
+    if args.speed_limit_mph is not None:
         config = MonitorConfig(
             calibration=config.calibration,
             min_contour_area_px=config.min_contour_area_px,
             max_track_age_frames=config.max_track_age_frames,
             match_max_distance_px=config.match_max_distance_px,
             speed_smoothing_window=config.speed_smoothing_window,
-            speed_limit_kmh=float(args.speed_limit_kmh),
+            speed_limit_mph=float(args.speed_limit_mph),
         )
 
     # Accept camera index as a string like "0".

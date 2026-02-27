@@ -29,7 +29,7 @@ python src/main.py --video path/to/video.mp4 --display --output speeds.csv
 With config + speed limit alerts:
 
 ```
-python src/main.py --config config.example.json --speed-limit-kmh 50 --display
+python src/main.py --config config.example.json --speed-limit-mph 35 --display
 ```
 
 Press `q` to quit when `--display` is enabled.
@@ -64,24 +64,24 @@ For how to measure calibration values in a real scene, see [calibration.md](cali
 ```json
 {
     "calibration": {
-        "fps": 30.0,  // Frames per second of the video feed
-        "meters_per_pixel_near": 0.05,  // Scale factor for objects near the camera
-        "meters_per_pixel_far": 0.02,  // Scale factor for objects far from the camera
-        "y_near": 700,  // Y-coordinate threshold for near zone
-        "y_far": 100  // Y-coordinate threshold for far zone
+        "fps": 30.0,
+        "feet_per_pixel_near": 0.05,
+        "feet_per_pixel_far": 0.02,
+        "y_near": 700,
+        "y_far": 100
     },
-    "min_contour_area_px": 800,  // Minimum object size in pixels to detect
-    "max_track_age_frames": 10,  // Maximum frames to keep a track without detections
-    "match_max_distance_px": 80.0,  // Maximum pixel distance to match detections to tracks
-    "speed_smoothing_window": 2,  // Number of frames to average for speed estimation
-    "speed_limit_kmh": 50.0  // Speed limit threshold for alerts
+    "min_contour_area_px": 2000,
+    "max_track_age_frames": 10,
+    "match_max_distance_px": 80.0,
+    "speed_smoothing_window": 2,
+    "speed_limit_mph": 35.0
 }
 ```
 
 
 ## Output
 
-CSV rows contain timestamp, frame index, track id, bounding box, and estimated speed (km/h).
+CSV rows contain timestamp, frame index, track id, bounding box, and estimated speed (mph).
 
 ## Testing
 

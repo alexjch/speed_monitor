@@ -8,11 +8,11 @@ Notes:
 
 ## 1. Near line (near the camera)
 
-On the near sidewalk/road edge, place two visible marks (left of center and right of center) on the same imaginary horizontal line. Measure and record the real-world distance between the marks in meters (e.g. with a tape measure).
+On the near sidewalk/road edge, place two visible marks (left of center and right of center) on the same imaginary horizontal line. Measure and record the real-world distance between the marks in feet (e.g. with a tape measure).
 
 ## 2. Far line (farther from the camera)
 
-Farther up the road (higher in the frame), place two visible marks (left and right of center) on the same imaginary horizontal line. Measure and record the real-world distance between the marks in meters.
+Farther up the road (higher in the frame), place two visible marks (left and right of center) on the same imaginary horizontal line. Measure and record the real-world distance between the marks in feet.
 
 ## 3. Extract a frame where all 4 marks are visible
 
@@ -24,13 +24,13 @@ Farther up the road (higher in the frame), place two visible marks (left and rig
 
 ## 4. Compute Calibration Parameters
 
-Calculate the transformation constants based on the reference frame to map image pixels to real-world meters.
+Calculate the transformation constants based on the reference frame to map image pixels to real-world feet.
 
-- **a) `meters_per_pixel_near`** Calculate the horizontal scale at the **near** reference line.
-$$meters\_per\_pixel_{near} = \frac{\text{Real-world distance (meters)}}{\text{Distance between marks (pixels)}}$$
+- **a) `feet_per_pixel_near`** Calculate the horizontal scale at the **near** reference line.
+$$feet\_per\_pixel_{near} = \frac{\text{Real-world distance (feet)}}{\text{Distance between marks (pixels)}}$$
 
-- **b) `meters_per_pixel_far`** Calculate the horizontal scale at the **far** reference line.
-$$meters\_per\_pixel_{far} = \frac{\text{Real-world distance (meters)}}{\text{Distance between marks (pixels)}}$$
+- **b) `feet_per_pixel_far`** Calculate the horizontal scale at the **far** reference line.
+$$feet\_per\_pixel_{far} = \frac{\text{Real-world distance (feet)}}{\text{Distance between marks (pixels)}}$$
 
 - **c) `y_near`** The vertical pixel index ($y$-coordinate) of the near horizontal line. This represents the line closest to the bottom of the frame.
 
